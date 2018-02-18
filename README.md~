@@ -1,0 +1,2 @@
+#Brick Breaker Game
+In brick breaker game, there is a ball and a paddle and there are many bricks at the top of the screen. You need break the bricks as the ball traverses. The ball bounces off the side screen and bricks when collide. After the collision that particular brick breaks. If the ball touces the bottom of the screen then the player loses the game. To prevent this there is a paddle which moves left and write.
