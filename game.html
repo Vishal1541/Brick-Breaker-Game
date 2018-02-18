@@ -1,0 +1,139 @@
+<!doctype html>
+<title>My First Game : Brick Breakout Game</title>
+<style>
+    body{
+        background: #545454;
+    }
+    canvas{
+        margin-left: 30%;
+        background: #9dd4ff;
+    }
+</style>
+<canvas id="canvas" height="300" width="300"></canvas>
+<script>
+    // Creating objects
+    var ball, paddle, brick, cw, ch, totalBricks;
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+    cw = canvas.width;
+    ch = canvas.heigth;
+    ball = {
+        x : 10,
+        y : 10,
+        r : 10,
+        vx : 1,
+        vy : -1
+    };
+    brick = {
+        x : 40,
+        y : 10,
+        w : 47.5,       //  w = (cw-2*gapLR-(col-1)*gapBwtn)/col
+        h : 10,
+        gapBwtn : 10,
+        gapTop : 40,
+        gapLR : 40,
+        col : 4,
+        row : 3
+    };
+    paddle = {
+        x : 100,
+        y : 280,
+        w : 100,
+        h : 5
+    };
+    
+    brick.w = (cw - 2*brick.gapLR - (brick.col-1)*brick.gapBwtn)/brick.col;
+    totalBricks = brick.row * brick.col;
+    paddle.x = (cw - paddle.w)/2;
+    paddle.y = cw - paddle.h;
+    ball.x = cw/2;
+    ball.y = paddle.y - ball.r;
+
+    document.addEventListener('keydown',function(e){
+        console.log(e.keyCode);
+        // Left key
+        if(e.keyCode==37 && paddle.x>0){
+            paddle.x = paddle.x - 3;
+        }
+        // Right Key
+        else if(e.keyCode==39 && paddle.x + paddle.w < cw){
+            paddle.x = paddle.x + 3;
+        }
+    });
+
+    function drawBall(){
+        ctx.beginPath();
+        ctx.fillStyle = "red";
+        ctx.arc(ball.x,ball.y,ball.r,0,2*Math.PI);
+        ctx.fill();
+        ctx.closePath();
+    }
+    // drawBall();
+    function drawPaddle(){
+        ctx.beginPath();
+        ctx.fillStyle = "brown";
+        ctx.rect(paddle.x,paddle.y,paddle.w,paddle.h);
+        ctx.fill();
+        ctx.closePath();
+    }
+    // drawPaddle();
+    function drawBrick(B){
+        ctx.beginPath();
+        ctx.fillStyle = "green";
+        ctx.rect(B.x,B.y,B.w,B.h);
+        ctx.fill();
+        ctx.closePath();
+    }
+    // drawBrick();
+    var bricks = [];
+    function drawBricks(){
+        for(var r = 0; r < brick.row; r++){
+            bricks[r] = [];
+            for(var c = 0; c < brick.col; c++){
+                bricks[r][c] = {x:10,y:10,w:brick.w,h:brick.h};
+                bricks[r][c].x = brick.gapLR+c*(brick.gapBwtn+brick.w);
+                bricks[r][c].y = r*(brick.gapBwtn+brick.h)+brick.gapTop;
+                // drawBrick(bricks[r][c]);
+                ctx.beginPath();
+                ctx.fillStyle = "green";
+                ctx.rect(bricks[r][c].x,bricks[r][c].y,brick.w,brick.h);
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+        // console.log(bricks);
+    }
+
+    function collisionDetection(){
+        // Left right wall and ball
+        if(ball.x > cw - ball.r || ball.x < ball.r){
+            ball.vx = -ball.vx;
+        }
+        // Top and ball
+        else if(ball.y < ball.r){
+            ball.vy = -ball.vy;
+        }
+        // Bottom and ball
+        else if(ball.y > ch - ball.r){
+            if(ball.x > paddle.x && ball.x < paddle.x + paddle.w){
+                ball.vy = -ball.vy;
+            }
+            else
+                alert("Game Over!");
+        }
+        ball.x = ball.x + ball.vx;
+        ball.y = ball.y + ball.vy;
+
+    }
+
+    function initGame(){
+        ctx.clearRect(0, 0, cw, ch);
+        drawBall();
+        drawPaddle();
+        drawBricks();
+        collisionDetection();
+        console.log("running...")
+    }
+    // initGame();
+    setInterval(initGame,1);
+</script>
